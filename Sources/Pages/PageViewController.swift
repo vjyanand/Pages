@@ -31,8 +31,6 @@ import UIKit
 struct PageViewController: UIViewControllerRepresentable {
 
     @Binding var currentPage: Int
-    var navigationOrientation: UIPageViewController.NavigationOrientation
-    var transitionStyle: UIPageViewController.TransitionStyle
     var controllers: [UIViewController]
 
     func makeCoordinator() -> PagesCoordinator {
@@ -41,8 +39,8 @@ struct PageViewController: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UIPageViewController {
         let pageViewController = UIPageViewController(
-            transitionStyle: self.transitionStyle,
-            navigationOrientation: self.navigationOrientation
+            transitionStyle: .scroll,
+            navigationOrientation: .horizontal
         )
         pageViewController.dataSource = context.coordinator
         pageViewController.delegate = context.coordinator
@@ -118,11 +116,7 @@ class PagesCoordinator: NSObject, UIPageViewControllerDataSource,
 extension PagesCoordinator: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if parent.navigationOrientation == .horizontal {
-            disableHorizontalBounce(scrollView)
-        } else {
-            disableVerticalBounce(scrollView)
-        }
+        disableHorizontalBounce(scrollView)
     }
 
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
@@ -133,13 +127,6 @@ extension PagesCoordinator: UIScrollViewDelegate {
         if parent.currentPage == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width ||
             parent.currentPage == self.parent.controllers.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
             scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
-        }
-    }
-
-    private func disableVerticalBounce(_ scrollView: UIScrollView) {
-        if parent.currentPage == 0 && scrollView.contentOffset.y < scrollView.bounds.size.height ||
-            parent.currentPage == self.parent.controllers.count - 1 && scrollView.contentOffset.y > scrollView.bounds.size.height {
-            scrollView.contentOffset = CGPoint(x: 0, y: scrollView.bounds.size.height)
         }
     }
 }

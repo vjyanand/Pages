@@ -32,9 +32,7 @@ public struct Pages: View {
 
     @Binding var currentPage: Int
     var pages: [AnyView]
-    var navigationOrientation: UIPageViewController.NavigationOrientation
-    var transitionStyle: UIPageViewController.TransitionStyle
-
+    
     /**
     Creates the paging view that generates user-defined static pages.
 
@@ -55,23 +53,12 @@ public struct Pages: View {
        ```
 
        - Parameters:
-           - navigationOrientation: Whether to paginate horizontally or vertically.
-           - transitionStyle: Whether to perform a page curl or a scroll effect on page turn.
-           - bounce: Whether to bounce back when a user tries to scroll past all the pages.
-           - wrap: A flag indicating whether to wrap the pages circularly when the user scrolls past the beginning or end.
-           - hasControl: Whether to display a page control or not.
-           - control: A user defined page control.
-           - controlAlignment: What position to put the page control.
            - pages: A function builder `PagesBuilder` that will put the views defined by the user on a list.
     */
     public init(
         currentPage: Binding<Int>,
-        navigationOrientation: UIPageViewController.NavigationOrientation = .horizontal,
-        transitionStyle: UIPageViewController.TransitionStyle = .scroll,
         @PagesBuilder pages: () -> [AnyView]
     ) {
-        self.navigationOrientation = navigationOrientation
-        self.transitionStyle = transitionStyle
         self.pages = pages()
         self._currentPage = currentPage
     }
@@ -79,8 +66,6 @@ public struct Pages: View {
     public var body: some View {
         PageViewController(
             currentPage: $currentPage,
-            navigationOrientation: navigationOrientation,
-            transitionStyle: transitionStyle,
             controllers: pages.map {
                 let h = UIHostingController(rootView: $0)
                 h.view.backgroundColor = .clear
